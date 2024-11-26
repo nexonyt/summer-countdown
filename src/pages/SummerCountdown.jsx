@@ -2,6 +2,8 @@ import React from "react";
 import { useState,useEffect } from "react";
 import styled from 'styled-components'
 
+
+
 const calculateTimeLeft = (targetDate) => {
     const now = new Date();
     const target = new Date(targetDate);
@@ -18,12 +20,21 @@ const calculateTimeLeft = (targetDate) => {
   
     return { days, hours, minutes, seconds };
   };
+
   
 
 export default function SummerCountdown() {
     const targetDate = "2025-06-21T00:00:00"; // Data wakacji
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+    const [theme,setTheme] = useState('light')
   
+    const handleButtonTheme = () => {
+        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
+
+
+  
+
     useEffect(() => {
       const timer = setInterval(() => {
         setTimeLeft(calculateTimeLeft(targetDate));
@@ -33,7 +44,8 @@ export default function SummerCountdown() {
     }, [targetDate]);
 
     return (
-        <MainDiv>
+        <MainDiv theme={theme}>
+
             <MainHeaderTitle>Odliczanie do wakacji 2025</MainHeaderTitle>
             <CountdownTimerMainDiv>
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.days}</DivForTimerCharachter><Label>DNI</Label></OneElementDiv>
@@ -41,6 +53,9 @@ export default function SummerCountdown() {
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
             </CountdownTimerMainDiv>
+            <Button onClick={handleButtonTheme}>
+            Zmien theme
+            </Button>
             <Footer>
                 <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
             </Footer>
@@ -48,6 +63,11 @@ export default function SummerCountdown() {
     );
 
 }
+const Button = styled.button`
+    width: 150px;
+    height: 30px;
+    border: 1px solid red;
+`
 
 const FooterText = styled.text`
     font-size: 14px;
@@ -115,16 +135,14 @@ align-items: center;
 `
 
 const MainDiv = styled.div`
-display: flex;
-justify-content: center;
-flex-direction: column;
-align-items: center;
-width: 100%;
-height: 100vh;
-background: #fc466b; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #fc466b, #3f5efb); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #fc466b, #3f5efb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background: ${props => (props.theme === 'dark' ? '#333' : '#fc466b')};
+  color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
   font-family: "Lato", sans-serif;
   font-weight: 400;
-  font-style: normal;
-`
+`;
