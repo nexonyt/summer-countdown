@@ -1,6 +1,7 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import styled from 'styled-components'
+import CustomizedSwitches from "../components/CustomizedSwitches";
 
 
 
@@ -28,7 +29,8 @@ export default function SummerCountdown() {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
     const [theme,setTheme] = useState('light')
   
-    const handleButtonTheme = () => {
+    const handleButtonTheme = (e) => {
+        console.log(e)
         setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 
@@ -53,9 +55,9 @@ export default function SummerCountdown() {
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
             </CountdownTimerMainDiv>
-            <Button onClick={handleButtonTheme}>
-            Zmien theme
-            </Button>
+                <DivForOnClick onClick={handleButtonTheme}>
+                <CustomizedSwitches ></CustomizedSwitches>
+                </DivForOnClick>
             <Footer>
                 <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
             </Footer>
@@ -63,6 +65,10 @@ export default function SummerCountdown() {
     );
 
 }
+
+const DivForOnClick = styled.div`
+    
+`
 const Button = styled.button`
     width: 150px;
     height: 30px;
@@ -141,8 +147,33 @@ const MainDiv = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: ${props => (props.theme === 'dark' ? '#333' : '#fc466b')};
+  background: ${props => (props.theme === 'dark' ? '#333' : '#c2bdcf')};
+  background: linear-gradient(
+    to right, 
+    ${props => (props.theme === 'dark' ? '#181818' : '#c2bdcf')}, 
+    ${props => (props.theme === 'dark' ? '#313030' : '#bdb9c2')}
+  );
+  position: relative;
+  overflow: hidden;
   color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
   font-family: "Lato", sans-serif;
   font-weight: 400;
+
+  /* Efekt bardziej widocznego szumu */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="5" stitchTiles="stitch" /></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" /></svg>');
+    opacity: 0.4; /* Bardziej widoczny szum */
+    z-index: 1;
+    pointer-events: none; /* Blokuje interakcję */
+    mix-blend-mode: overlay; /* Opcjonalnie, dla lepszego kontrastu */
+  }
+
+  /* Elementy w środku */
+  z-index: 2;
 `;
