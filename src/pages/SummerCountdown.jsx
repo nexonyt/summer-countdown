@@ -22,11 +22,27 @@ const calculateTimeLeft = (targetDate) => {
     return { days, hours, minutes, seconds };
   };
 
+  const calculateWeekdaysLeft = (targetDate) => {
+    const now = new Date();
+    const target = new Date(targetDate);
+    let weekdays = 0;
+
+    while (now < target) {
+        const day = now.getDay();
+        if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
+            weekdays++;
+        }
+        now.setDate(now.getDate() + 1);
+    }
+
+    return weekdays;
+};
   
 
 export default function SummerCountdown() {
     const targetDate = "2025-06-21T00:00:00"; // Data wakacji
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+    const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(targetDate));
     const [theme,setTheme] = useState('light')
   
     const handleButtonTheme = (e) => {
@@ -55,6 +71,7 @@ export default function SummerCountdown() {
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
             </CountdownTimerMainDiv>
+            <CasualText>Bez weekendów do wakacji pozostało: {weekdaysLeft} dni</CasualText>
                 <DivForOnClick onClick={handleButtonTheme}>
                 <CustomizedSwitches ></CustomizedSwitches>
                 </DivForOnClick>
@@ -73,6 +90,12 @@ const Button = styled.button`
     width: 150px;
     height: 30px;
     border: 1px solid red;
+`
+
+const CasualText = styled.text`
+ font-size: 24px;
+ color: white;
+ margin: 25px 0px;
 `
 
 const FooterText = styled.text`
@@ -102,13 +125,13 @@ const Label = styled.div`
 `;
 
 const CountdownTimerMainDiv = styled.div`
-    height: 250px;
+    height: 150px;
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin: 0px 0px 250px 0px;
+    margin: 0px 0px 0px 0px;
 `
 
 const OneElementDiv = styled.div`
