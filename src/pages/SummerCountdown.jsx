@@ -2,7 +2,34 @@ import React from "react";
 import { useState,useEffect } from "react";
 import styled from 'styled-components'
 import CustomizedSwitches from "../components/CustomizedSwitches";
+import ProgressBar from "../components/ProgressBarDiv";
+import { LinearProgressBar } from "react-percentage-bar";
 
+
+
+
+
+
+
+const calculateSchoolYearProgress = (targetDate) => {
+  const startOfSchoolYear = new Date("2024-09-01"); // Data początku roku szkolnego
+  const startOfSummer = new Date("2025-06-27"); // Data początku wakacji
+  const now = new Date();
+
+  if (now < startOfSchoolYear) {
+      return 100; // Przed rozpoczęciem roku szkolnego cały rok jeszcze został
+  } else if (now >= startOfSummer) {
+      return 0; // Po rozpoczęciu wakacji nic już nie zostało
+  }
+
+  const totalSchoolYear = startOfSummer - startOfSchoolYear; // Całkowity czas trwania roku szkolnego w milisekundach
+  const elapsedTime = now - startOfSchoolYear; // Czas, który upłynął od początku roku szkolnego
+
+  const remainingTime = totalSchoolYear - elapsedTime;
+  const remainingPercentage = (remainingTime / totalSchoolYear) * 100;
+
+  return remainingPercentage.toFixed(5); // Zwrócenie wartości zaokrąglonej do dwóch miejsc po przecinku
+};
 
 
 const calculateTimeLeft = (targetDate) => {
@@ -40,10 +67,11 @@ const calculateTimeLeft = (targetDate) => {
   
 
 export default function SummerCountdown() {
-    const targetDate = "2025-06-21T00:00:00"; // Data wakacji
+    const targetDate = "2025-06-27"; // Data wakacji
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
     const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(targetDate));
-    const [theme,setTheme] = useState('light')
+    const [percentageValue,setPercentageValue] = useState(calculateSchoolYearProgress(targetDate));
+    const [theme,setTheme] = useState('dark')
   
     const handleButtonTheme = (e) => {
         console.log(e)
@@ -58,7 +86,7 @@ export default function SummerCountdown() {
         setTimeLeft(calculateTimeLeft(targetDate));
       }, 1000);
   
-      return () => clearInterval(timer); // Wyczyszczenie interwału po odmontowaniu komponentu
+      return () => clearInterval(timer); 
     }, [targetDate]);
 
     return (
@@ -67,14 +95,18 @@ export default function SummerCountdown() {
             <MainHeaderTitle>Odliczanie do wakacji 2025</MainHeaderTitle>
             <CountdownTimerMainDiv>
                 <OneElementDiv><DivForTimerCharachter>{timeLeft.days}</DivForTimerCharachter><Label>DNI</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.hours}</DivForTimerCharachter><Label>GODZINY</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.hours}</DivForTimerCharachter><Label>GODZIN</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUT</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUND</Label></OneElementDiv>
             </CountdownTimerMainDiv>
-            <CasualText>Bez weekendów do wakacji pozostało: {weekdaysLeft} dni</CasualText>
+            <CasualText theme={theme}>Bez weekendów do wakacji pozostało: {weekdaysLeft} dni</CasualText>
+            <CasualText theme={theme}>Ile procent roku szkolnego upłyneło?</CasualText>
+            <ProgressBar percentage={percentageValue} />   
+
                 <DivForOnClick onClick={handleButtonTheme}>
                 <CustomizedSwitches ></CustomizedSwitches>
                 </DivForOnClick>
+                <CasualText>Koniec roku szkolnego: {targetDate}</CasualText>
             <Footer>
                 <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
             </Footer>
@@ -83,19 +115,15 @@ export default function SummerCountdown() {
 
 }
 
-const DivForOnClick = styled.div`
-    
-`
-const Button = styled.button`
-    width: 150px;
-    height: 30px;
-    border: 1px solid red;
-`
+
+
+const DivForOnClick = styled.div``
 
 const CasualText = styled.text`
  font-size: 24px;
- color: white;
+ color: ${props => (props.theme === 'light' ? 'black' : 'white')};
  margin: 25px 0px;
+ text-align: center;
 `
 
 const FooterText = styled.text`
@@ -136,15 +164,15 @@ const CountdownTimerMainDiv = styled.div`
 
 const OneElementDiv = styled.div`
   margin: 20px;
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 40px;
   color: white;
-  background: rgba(255, 255, 255, 0.11);
-  border-radius: 3px;
+  //background: rgba(255, 255, 255, 0.11);
+ /* border-radius: 3px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5.4px);
   -webkit-backdrop-filter: blur(5.4px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3); */
   display: flex;
   justify-content: center;
   align-items: center;
