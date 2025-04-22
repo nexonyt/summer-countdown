@@ -1,69 +1,118 @@
-import React from "react";
-import { useState,useEffect } from "react";
-import styled from 'styled-components'
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import CustomizedSwitches from "../components/CustomizedSwitches";
 
-
+const calculateWeekdaysLeft = (startDate, endDate) => {
+  let count = 0;
+  let current = new Date(startDate);
+  while (current <= endDate) {
+    const day = current.getDay();
+    if (day !== 0 && day !== 6) count++;
+    current.setDate(current.getDate() + 1);
+  }
+  return count;
+};
 
 const calculateTimeLeft = (targetDate) => {
-    const now = new Date();
-    const target = new Date(targetDate);
-    const difference = target - now;
-  
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-  
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-  
-    return { days, hours, minutes, seconds };
-  };
+  const now = new Date();
+  const target = new Date(targetDate);
+  const difference = target - now;
 
-  
+  if (difference <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+  return { days, hours, minutes, seconds };
+};
 
 export default function SummerCountdown() {
-    const targetDate = "2025-06-21T00:00:00"; // Data wakacji
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
-    const [theme,setTheme] = useState('light')
-  
-    const handleButtonTheme = (e) => {
-        console.log(e)
-        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-    };
+  const targetDate = "2025-06-27T00:00:00";
+  const endDate = new Date("2025-08-31");
+  const now = new Date();
 
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+  const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(now, new Date(targetDate)));
+  const [theme, setTheme] = useState("light");
 
-  
+  const handleButtonTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
 
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setTimeLeft(calculateTimeLeft(targetDate));
-      }, 1000);
-  
-      return () => clearInterval(timer); // Wyczyszczenie interwału po odmontowaniu komponentu
-    }, [targetDate]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(targetDate));
+      setWeekdaysLeft(calculateWeekdaysLeft(new Date(), new Date(targetDate)));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
 
-    return (
-        <MainDiv theme={theme}>
+  const formatDate = (dateObj) => {
+    const dd = String(dateObj.getDate()).padStart(2, "0");
+    const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const yyyy = dateObj.getFullYear();
+    return `${dd}.${mm}.${yyyy}`;
+  };
 
-            <MainHeaderTitle>Odliczanie do wakacji 2025</MainHeaderTitle>
-            <CountdownTimerMainDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.days}</DivForTimerCharachter><Label>DNI</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.hours}</DivForTimerCharachter><Label>GODZINY</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
-                <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
-            </CountdownTimerMainDiv>
-                <DivForOnClick onClick={handleButtonTheme}>
-                <CustomizedSwitches ></CustomizedSwitches>
-                </DivForOnClick>
-            <Footer>
-                <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
-            </Footer>
-        </MainDiv>
-    );
+  // Postęp roku szkolnego
+  const schoolStart = new Date("2024-09-01T00:00:00");
+  const schoolEnd = new Date(targetDate);
+  const totalSchoolDays = Math.floor((schoolEnd - schoolStart) / (1000 * 60 * 60 * 24));
+  const passedDays = Math.floor((new Date() - schoolStart) / (1000 * 60 * 60 * 24));
+  const percentCompleteRaw = (passedDays / totalSchoolDays) * 100;
+  const percentComplete = Math.min(100, Math.max(0, percentCompleteRaw.toFixed(4)));
+  const remainingPercent = (100 - percentCompleteRaw).toFixed(4);
 
+  return (
+    <MainDiv theme={theme}>
+      <MainHeaderTitle>Odliczanie do wakacji 2025</MainHeaderTitle>
+      <CountdownTimerMainDiv>
+        <OneElementDiv>
+          <DivForTimerCharachter>{timeLeft.days}</DivForTimerCharachter>
+          <Label>DNI</Label>
+        </OneElementDiv>
+        <OneElementDiv>
+          <DivForTimerCharachter>{timeLeft.hours}</DivForTimerCharachter>
+          <Label>GODZINY</Label>
+        </OneElementDiv>
+        <OneElementDiv>
+          <DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter>
+          <Label>MINUTY</Label>
+        </OneElementDiv>
+        <OneElementDiv>
+          <DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter>
+          <Label>SEKUNDY</Label>
+        </OneElementDiv>
+      </CountdownTimerMainDiv>
+
+      <AdditionalInformationDiv>
+        <AlternativeText>Bez weekendów do wakacji zostało tylko:</AlternativeText>
+        <DivForTimerCharachter>{weekdaysLeft} dni roboczych</DivForTimerCharachter>
+
+        <AlternativeText>Koniec roku szkolnego: {formatDate(new Date(targetDate))}</AlternativeText>
+        <AlternativeText>Koniec wakacji: {formatDate(endDate)}</AlternativeText>
+        <AlternativeText>Pozostało {remainingPercent}% roku szkolnego</AlternativeText>
+
+        <ProgressBarWrapper>
+          <ProgressBar>
+            <Progress style={{ width: `${percentComplete}%` }} />
+          </ProgressBar>
+          <ProgressPercent>{percentComplete}% zakończone</ProgressPercent>
+        </ProgressBarWrapper>
+      </AdditionalInformationDiv>
+
+      <DivForOnClick onClick={handleButtonTheme}>
+        <CustomizedSwitches />
+      </DivForOnClick>
+      <Footer>
+        <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
+      </Footer>
+    </MainDiv>
+  );
 }
 
 const DivForOnClick = styled.div`
@@ -72,7 +121,7 @@ const DivForOnClick = styled.div`
 const Button = styled.button`
     width: 150px;
     height: 30px;
-    border: 1px solid red;
+    
 `
 
 const FooterText = styled.text`
@@ -108,7 +157,7 @@ const CountdownTimerMainDiv = styled.div`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin: 0px 0px 250px 0px;
+    
 `
 
 const OneElementDiv = styled.div`
@@ -138,6 +187,27 @@ align-items: center;
     text-shadow: 4px 3px 6px rgba(66, 68, 90, 1);
     color: #ffffff;
 
+`
+
+const AdditionalInformationDiv = styled.div`
+width: 100%;
+
+height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`
+
+const AlternativeText = styled.div`
+  display: flex;
+justify-content: center;
+align-items: center;
+    width: 100%;
+    font-size: 18px;
+    /* font-weight: bold; */
+    /* text-shadow: 4px 3px 6px rgba(66, 68, 90, 1); */
+    color: #ffffff;
 `
 
 const MainDiv = styled.div`
@@ -176,4 +246,31 @@ const MainDiv = styled.div`
 
   /* Elementy w środku */
   z-index: 2;
+`;
+
+const ProgressBarWrapper = styled.div`
+  margin-top: 20px;
+  width: 300px;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  background-color: #ccc;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  background-color: #4caf50;
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+`;
+
+const ProgressPercent = styled.div`
+  margin-top: 5px;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  opacity: 0.7;
 `;
