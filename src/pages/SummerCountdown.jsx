@@ -18,6 +18,7 @@ const calculateTimeLeft = (targetDate) => {
   const target = new Date(targetDate);
   const difference = target - now;
 
+<<<<<<< HEAD
   if (difference <= 0) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
@@ -34,6 +35,35 @@ export default function SummerCountdown() {
   const targetDate = "2025-06-27T00:00:00";
   const endDate = new Date("2025-08-31");
   const now = new Date();
+=======
+  const calculateWeekdaysLeft = (targetDate) => {
+    const now = new Date();
+    const target = new Date(targetDate);
+    let weekdays = 0;
+
+    while (now < target) {
+        const day = now.getDay();
+        if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
+            weekdays++;
+        }
+        now.setDate(now.getDate() + 1);
+    }
+
+    return weekdays;
+};
+  
+
+export default function SummerCountdown() {
+    const targetDate = "2025-06-21T00:00:00"; // Data wakacji
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+    const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(targetDate));
+    const [theme,setTheme] = useState('light')
+  
+    const handleButtonTheme = (e) => {
+        console.log(e)
+        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
+>>>>>>> 06d933f2b63fb5676ad1a13df419c139ad2ff980
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
   const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(now, new Date(targetDate)));
@@ -58,6 +88,7 @@ export default function SummerCountdown() {
     return `${dd}.${mm}.${yyyy}`;
   };
 
+<<<<<<< HEAD
   // Postęp roku szkolnego
   const schoolStart = new Date("2024-09-01T00:00:00");
   const schoolEnd = new Date(targetDate);
@@ -66,6 +97,24 @@ export default function SummerCountdown() {
   const percentCompleteRaw = (passedDays / totalSchoolDays) * 100;
   const percentComplete = Math.min(100, Math.max(0, percentCompleteRaw.toFixed(4)));
   const remainingPercent = (100 - percentCompleteRaw).toFixed(4);
+=======
+            <MainHeaderTitle>Odliczanie do wakacji 2025</MainHeaderTitle>
+            <CountdownTimerMainDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.days}</DivForTimerCharachter><Label>DNI</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.hours}</DivForTimerCharachter><Label>GODZINY</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.minutes}</DivForTimerCharachter><Label>MINUTY</Label></OneElementDiv>
+                <OneElementDiv><DivForTimerCharachter>{timeLeft.seconds}</DivForTimerCharachter><Label>SEKUNDY</Label></OneElementDiv>
+            </CountdownTimerMainDiv>
+            <CasualText>Bez weekendów do wakacji pozostało: {weekdaysLeft} dni</CasualText>
+                <DivForOnClick onClick={handleButtonTheme}>
+                <CustomizedSwitches ></CustomizedSwitches>
+                </DivForOnClick>
+            <Footer>
+                <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
+            </Footer>
+        </MainDiv>
+    );
+>>>>>>> 06d933f2b63fb5676ad1a13df419c139ad2ff980
 
   return (
     <MainDiv theme={theme}>
@@ -124,6 +173,12 @@ const Button = styled.button`
     
 `
 
+const CasualText = styled.text`
+ font-size: 24px;
+ color: white;
+ margin: 25px 0px;
+`
+
 const FooterText = styled.text`
     font-size: 14px;
     color: white;
@@ -151,13 +206,17 @@ const Label = styled.div`
 `;
 
 const CountdownTimerMainDiv = styled.div`
-    height: 250px;
+    height: 150px;
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+<<<<<<< HEAD
     
+=======
+    margin: 0px 0px 0px 0px;
+>>>>>>> 06d933f2b63fb5676ad1a13df419c139ad2ff980
 `
 
 const OneElementDiv = styled.div`
