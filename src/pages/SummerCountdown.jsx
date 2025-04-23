@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import CustomizedSwitches from "../components/CustomizedSwitches";
+import AnimatedExample from '../components/ProgressBarNew';
 
 const calculateWeekdaysLeft = (startDate, endDate) => {
   let count = 0;
@@ -31,8 +32,7 @@ const calculateTimeLeft = (targetDate) => {
 };
 
 export default function SummerCountdown() {
-  const endDate = "2025-08-31T00:35:00";
-  const targetDate = "2025-06-21T10:00:00"; // Data wakacji
+  const targetDate = "2025-06-27T00:00:00"; // Data wakacji
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
   const [weekdaysLeft, setWeekdaysLeft] = useState(
     calculateWeekdaysLeft(targetDate)
@@ -101,29 +101,19 @@ export default function SummerCountdown() {
         <br></br>
         <AlternativeTextMini>Koniec roku szkolnego: </AlternativeTextMini>
         <AlternativeText>{formatDate(new Date(targetDate))}</AlternativeText>
-        <br></br>
-        <AlternativeTextMini>Koniec wakacji: </AlternativeTextMini>
-        <AlternativeText>{formatDate(new Date(endDate))}</AlternativeText>
-        <br></br>
-          <br></br>
-        <AlternativeText>
-          Pozostało {remainingPercent}% roku szkolnego
-        </AlternativeText>
 
-          <br></br>
         <ProgressBarWrapper>
           <AlternativeTextMini>Postęp roku szkolnego: </AlternativeTextMini>
-          <br></br>
           <ProgressBar>
-            <Progress style={{ width: `${percentComplete}%` }} />
+            <AnimatedExample variant={'success'} animated now={percentComplete} label={`${percentComplete}%`} />
           </ProgressBar>
-          <ProgressPercent>{percentComplete}% zakończone</ProgressPercent>
         </ProgressBarWrapper>
+        <br></br>
+        <AlternativeTextMini>
+          Pozostało {remainingPercent}% roku szkolnego
+        </AlternativeTextMini>
       </AdditionalInformationDiv>
 
-      <DivForOnClick onClick={handleButtonTheme}>
-        <CustomizedSwitches />
-      </DivForOnClick>
       <Footer>
         <FooterText>
           Wykonano z myślą o wakacjach przez nexonstudio.pl
@@ -182,7 +172,6 @@ const CountdownTimerMainDiv = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 0px 0px 0px 0px;
 `;
 
 const OneElementDiv = styled.div`
@@ -211,7 +200,6 @@ const MainHeaderTitle = styled.div`
   width: 100%;
   font-size: 36px;
   font-weight: bold;
-  text-shadow: 4px 1px 10px rgb(252, 227, 0);
   color: rgb(0, 0, 0);
   text-align: center;
   word-wrap: break-word;
@@ -219,7 +207,7 @@ const MainHeaderTitle = styled.div`
 
 const AdditionalInformationDiv = styled.div`
   width: 100%;
-  height: 450px;
+  height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -239,7 +227,8 @@ const AlternativeText = styled.div`
 `;
 
 const AlternativeTextMini = styled.div`
- font-size: 20px;
+ font-size: 18px;
+ margin: px 0px;
 `
 
 const MainDiv = styled.div`
@@ -281,21 +270,22 @@ const MainDiv = styled.div`
 `;
 
 const ProgressBarWrapper = styled.div`
-  margin-top: 20px;
+  margin: 20px 0px;
   width: 300px;
+  height: 50px;
 `;
 
 const ProgressBar = styled.div`
   width: 100%;
-  background-color: #ccc;
-  height: 20px;
+  margin: 10px 0px;
+  height: 70px;
   border-radius: 10px;
   overflow: hidden;
 `;
 
 const Progress = styled.div`
   background-color: #4caf50;
-  height: 100%;
+  height: 50px;
   transition: width 0.5s ease-in-out;
 `;
 
