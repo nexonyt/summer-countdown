@@ -13,38 +13,36 @@ const calculateWeekdaysLeft = (startDate, endDate) => {
   return count;
 };
 
+
 const calculateTimeLeft = (targetDate) => {
   const now = new Date();
   const target = new Date(targetDate);
   const difference = target - now;
 
-  const calculateWeekdaysLeft = (targetDate) => {
-    const now = new Date();
-    const target = new Date(targetDate);
-    let weekdays = 0;
+  if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
-    while (now < target) {
-        const day = now.getDay();
-        if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
-            weekdays++;
-        }
-        now.setDate(now.getDate() + 1);
-    }
+  const totalSeconds = Math.floor(difference / 1000);
+  const days = Math.floor(totalSeconds / (60 * 60 * 24));
+  const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
 
-    return weekdays;
-}};
-  
+  return { days, hours, minutes, seconds };
+};
 
 export default function SummerCountdown() {
-    const targetDate = "2025-06-21T00:00:00"; // Data wakacji
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
-    const [weekdaysLeft, setWeekdaysLeft] = useState(calculateWeekdaysLeft(targetDate));
-    const [theme,setTheme] = useState('light')
-  
-    const handleButtonTheme = (e) => {
-        console.log(e)
-        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-    };
+  const endDate = "2025-08-31T00:35:00";
+  const targetDate = "2025-06-21T10:00:00"; // Data wakacji
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
+  const [weekdaysLeft, setWeekdaysLeft] = useState(
+    calculateWeekdaysLeft(targetDate)
+  );
+  const [theme, setTheme] = useState("light");
+
+  const handleButtonTheme = (e) => {
+    console.log(e);
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -63,12 +61,15 @@ export default function SummerCountdown() {
 
   // Postęp roku szkolnego
   const schoolStart = new Date("2024-09-01T00:00:00");
-  const schoolEnd = new Date(targetDate);
-  const totalSchoolDays = Math.floor((schoolEnd - schoolStart) / (1000 * 60 * 60 * 24));
-  const passedDays = Math.floor((new Date() - schoolStart) / (1000 * 60 * 60 * 24));
-  const percentCompleteRaw = (passedDays / totalSchoolDays) * 100;
-  const percentComplete = Math.min(100, Math.max(0, percentCompleteRaw.toFixed(4)));
-  const remainingPercent = (100 - percentCompleteRaw).toFixed(4);
+  const schoolEnd = new Date(targetDate); // już jako Date, nie string
+  const totalSchoolTime = schoolEnd - schoolStart;
+  const passedTime = new Date() - schoolStart;
+  const percentCompleteRaw = (passedTime / totalSchoolTime) * 100;
+  const percentComplete = Math.min(
+    100,
+    Math.max(0, percentCompleteRaw.toFixed(5))
+  );
+  const remainingPercent = (100 - percentCompleteRaw).toFixed(5);
 
   return (
     <MainDiv theme={theme}>
@@ -93,14 +94,26 @@ export default function SummerCountdown() {
       </CountdownTimerMainDiv>
 
       <AdditionalInformationDiv>
-        <AlternativeText>Bez weekendów do wakacji zostało tylko:</AlternativeText>
-        <DivForTimerCharachter>{weekdaysLeft} dni roboczych</DivForTimerCharachter>
+        <AlternativeTextMini>
+          Bez weekendów do wakacji zostało tylko:
+        </AlternativeTextMini>
+        <AlternativeText>{weekdaysLeft} dni</AlternativeText>
+        <br></br>
+        <AlternativeTextMini>Koniec roku szkolnego: </AlternativeTextMini>
+        <AlternativeText>{formatDate(new Date(targetDate))}</AlternativeText>
+        <br></br>
+        <AlternativeTextMini>Koniec wakacji: </AlternativeTextMini>
+        <AlternativeText>{formatDate(new Date(endDate))}</AlternativeText>
+        <br></br>
+          <br></br>
+        <AlternativeText>
+          Pozostało {remainingPercent}% roku szkolnego
+        </AlternativeText>
 
-        <AlternativeText>Koniec roku szkolnego: {formatDate(new Date(targetDate))}</AlternativeText>
-        <AlternativeText>Koniec wakacji: {formatDate(endDate)}</AlternativeText>
-        <AlternativeText>Pozostało {remainingPercent}% roku szkolnego</AlternativeText>
-
+          <br></br>
         <ProgressBarWrapper>
+          <AlternativeTextMini>Postęp roku szkolnego: </AlternativeTextMini>
+          <br></br>
           <ProgressBar>
             <Progress style={{ width: `${percentComplete}%` }} />
           </ProgressBar>
@@ -112,67 +125,71 @@ export default function SummerCountdown() {
         <CustomizedSwitches />
       </DivForOnClick>
       <Footer>
-        <FooterText>Wykonano z myślą o wakacjach przez nexonstudio.pl</FooterText>
+        <FooterText>
+          Wykonano z myślą o wakacjach przez nexonstudio.pl
+        </FooterText>
       </Footer>
     </MainDiv>
   );
 }
 
-const DivForOnClick = styled.div`
-    
-`
+const DivForOnClick = styled.div``;
 const Button = styled.button`
-    width: 150px;
-    height: 30px;
-    
-`
+  width: 150px;
+  height: 30px;
+`;
 
 const CasualText = styled.text`
- font-size: 24px;
- color: white;
- margin: 25px 0px;
-`
+  font-size: 24px;
+  color: white;
+  margin: 25px 0px;
+`;
 
 const FooterText = styled.text`
-    font-size: 14px;
-    color: white;
-    opacity: 0.5;
-
-`
+  font-size: 14px;
+  color: white;
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  color: #000;
+`;
 const Footer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const DivForTimerCharachter = styled.div`
-font-size: 36px;
-`
+  font-size: 36px;
+  color: #000000;
+`;
 
 const Label = styled.div`
   position: absolute;
-  bottom: -25px; 
+  bottom: -25px;
   font-size: 14px;
-  color: #fff;
+  color: #000000;
   text-transform: uppercase;
   text-align: center;
 `;
 
 const CountdownTimerMainDiv = styled.div`
-    height: 150px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 0px 0px 0px 0px;
-`
+  height: 150px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 0px 0px 0px;
+`;
 
 const OneElementDiv = styled.div`
   margin: 20px;
-  width: 100px;
-  height: 100px;
+  width: 20vw;
+  max-width: 100px;
+  aspect-ratio: 1 / 1;  // <- ZACHOWUJE PROPORCJE
   color: white;
   background: rgba(255, 255, 255, 0.11);
   border-radius: 3px;
@@ -183,40 +200,46 @@ const OneElementDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; /* Ustawienie pozycji względem potomnych elementów */
+  position: relative;
 `;
 
-const MainHeaderTitle = styled.div`
-display: flex;
-justify-content: center;
-align-items: center;
-    width: 100%;
-    font-size: 36px;
-    font-weight: bold;
-    text-shadow: 4px 3px 6px rgba(66, 68, 90, 1);
-    color: #ffffff;
 
-`
+const MainHeaderTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 36px;
+  font-weight: bold;
+  text-shadow: 4px 1px 10px rgb(252, 227, 0);
+  color: rgb(0, 0, 0);
+  text-align: center;
+  word-wrap: break-word;
+`;
 
 const AdditionalInformationDiv = styled.div`
-width: 100%;
-
-height: 300px;
+  width: 100%;
+  height: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`
+  text-align: center;
+`;
 
 const AlternativeText = styled.div`
   display: flex;
-justify-content: center;
-align-items: center;
-    width: 100%;
-    font-size: 18px;
-    /* font-weight: bold; */
-    /* text-shadow: 4px 3px 6px rgba(66, 68, 90, 1); */
-    color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 26px;
+  /* font-weight: bold; */
+  text-shadow: 4px 1px px rgb(0, 0, 0); 
+  color:rgb(14, 14, 14);
+`;
+
+const AlternativeTextMini = styled.div`
+ font-size: 20px;
 `
 
 const MainDiv = styled.div`
@@ -226,21 +249,21 @@ const MainDiv = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: ${props => (props.theme === 'dark' ? '#333' : '#c2bdcf')};
+  background: ${(props) => (props.theme === "dark" ? "#333" : "#E1F5C4")};
   background: linear-gradient(
-    to right, 
-    ${props => (props.theme === 'dark' ? '#181818' : '#c2bdcf')}, 
-    ${props => (props.theme === 'dark' ? '#313030' : '#bdb9c2')}
+    to right,
+    ${(props) => (props.theme === "dark" ? "#181818" : "#F7A900")},
+    ${(props) => (props.theme === "dark" ? "#313030" : "#FFE100")}
   );
   position: relative;
   overflow: hidden;
-  color: ${props => (props.theme === 'dark' ? '#fff' : '#000')};
+  color: ${(props) => (props.theme === "dark" ? "#fff" : "#000")};
   font-family: "Lato", sans-serif;
   font-weight: 400;
 
   /* Efekt bardziej widocznego szumu */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -278,8 +301,8 @@ const Progress = styled.div`
 
 const ProgressPercent = styled.div`
   margin-top: 5px;
-  font-size: 14px;
-  color: #fff;
+  font-size: 18px;
+  color: #000;
   text-align: center;
-  opacity: 0.7;
+  opacity: 1;
 `;
