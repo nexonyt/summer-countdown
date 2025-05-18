@@ -15,6 +15,8 @@ const calculateWeekdaysLeft = (startDate, endDate) => {
 };
 
 
+
+
 const calculateTimeLeft = (targetDate) => {
   const now = new Date();
   const target = new Date(targetDate);
@@ -32,6 +34,24 @@ const calculateTimeLeft = (targetDate) => {
 };
 
 export default function SummerCountdown() {
+
+  useEffect(() => {
+    if (sessionStorage.getItem('external-logged')) return;
+  
+    fetch('https://urlpretty.pl/api/log-external-entry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: window.location.pathname,
+        referrer: document.referrer,
+        link_id: 120,
+      }),
+    });
+  
+    sessionStorage.setItem('external-logged', '1');
+  }, []);
+  
+
   const targetDate = "2025-06-27T00:00:00"; // Data wakacji
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
   const [weekdaysLeft, setWeekdaysLeft] = useState(
@@ -190,6 +210,14 @@ const OneElementDiv = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+
+  @media (max-width: 600px) {
+    background: none;
+    box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  }
 `;
 
 
@@ -203,6 +231,7 @@ const MainHeaderTitle = styled.div`
   color: rgb(0, 0, 0);
   text-align: center;
   word-wrap: break-word;
+  white-space: pre-line;
 `;
 
 const AdditionalInformationDiv = styled.div`
