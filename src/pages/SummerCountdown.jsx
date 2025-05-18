@@ -12,7 +12,7 @@ const calculateWeekdaysLeft = (startDate, endDate) => {
     current.setDate(current.getDate() + 1);
   }
   return count;
-};
+};  
 
 
 const calculateTimeLeft = (targetDate) => {
@@ -45,12 +45,18 @@ export default function SummerCountdown() {
   };
 
   useEffect(() => {
+    setTimeLeft(calculateTimeLeft(targetDate));
+    setWeekdaysLeft(calculateWeekdaysLeft(new Date(), new Date(targetDate)));
+
+
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft(targetDate));
       setWeekdaysLeft(calculateWeekdaysLeft(new Date(), new Date(targetDate)));
     }, 1000);
+
     return () => clearInterval(timer);
   }, [targetDate]);
+
 
   const formatDate = (dateObj) => {
     const dd = String(dateObj.getDate()).padStart(2, "0");
