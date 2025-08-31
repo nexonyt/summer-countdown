@@ -52,7 +52,7 @@ export default function SummerCountdown() {
   }, []);
   
 
-  const targetDate = "2025-06-27T00:00:00"; // Data wakacji
+  const targetDate = "2026-06-26T00:00:00"; // Data wakacji
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
   const [weekdaysLeft, setWeekdaysLeft] = useState(
     calculateWeekdaysLeft(targetDate)
@@ -86,7 +86,7 @@ export default function SummerCountdown() {
   };
 
   // Postęp roku szkolnego
-  const schoolStart = new Date("2024-09-01T00:00:00");
+  const schoolStart = new Date("2025-09-01T00:00:00");
   const schoolEnd = new Date(targetDate); // już jako Date, nie string
   const totalSchoolTime = schoolEnd - schoolStart;
   const passedTime = new Date() - schoolStart;
