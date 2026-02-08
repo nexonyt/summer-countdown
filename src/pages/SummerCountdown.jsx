@@ -272,36 +272,48 @@ const MainDiv = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100vh;
-  background: ${(props) => (props.theme === "dark" ? "#333" : "#E1F5C4")};
+  
+  /* KLUCZOWA ZMIANA: min-height gwarantuje pełen ekran, ale pozwala rosnąć */
+  min-height: 100vh; 
+  min-height: 100dvh; /* Nowoczesna jednostka dla telefonów (ukrywa paski przeglądarki) */
+  
+  /* Gradient zarządzany przez props theme */
+  background: ${(props) => (props.theme === "dark" ? "#181818" : "#F7A900")};
   background: linear-gradient(
-    to right,
-    ${(props) => (props.theme === "dark" ? "#181818" : "#F7A900")},
-    ${(props) => (props.theme === "dark" ? "#313030" : "#FFE100")}
+    to bottom, /* Zmień na 'to bottom' dla lepszego efektu na mobile */
+    ${(props) => (props.theme === "dark" ? "#181818" : "#FFC700")},
+    ${(props) => (props.theme === "dark" ? "#313030" : "#FFEB3B")}
   );
+  
   position: relative;
-  overflow: hidden;
   color: ${(props) => (props.theme === "dark" ? "#fff" : "#000")};
   font-family: "Lato", sans-serif;
   font-weight: 400;
 
-  /* Efekt bardziej widocznego szumu */
+  /* Dodatkowy padding na dole, żeby stopka nie dotykała krawędzi ekranu */
+  padding-bottom: 40px; 
+
+  /* Efekt szumu - POPRAWIONY */
   &::before {
     content: "";
-    position: absolute;
+    /* Używamy fixed, żeby szum nie kończył się w połowie długiej strony */
+    position: fixed; 
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="5" stitchTiles="stitch" /></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" /></svg>');
-    opacity: 0.4; /* Bardziej widoczny szum */
+    opacity: 0.4;
     z-index: 1;
-    pointer-events: none; /* Blokuje interakcję */
-    mix-blend-mode: overlay; /* Opcjonalnie, dla lepszego kontrastu */
+    pointer-events: none;
+    mix-blend-mode: overlay;
   }
 
-  /* Elementy w środku */
-  z-index: 2;
+  /* To ważne, żeby treść była nad szumem */
+  & > * {
+    z-index: 2;
+  }
 `;
 
 const ProgressBarWrapper = styled.div`
